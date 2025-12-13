@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase";
+import { ClipLoader } from "react-spinners";
 
 function SignUp() {
   const primaryColor = "#ff4d2d";
@@ -18,8 +21,11 @@ function SignUp() {
   const [email, setEmail] = React.useState("");
   const [mobileNumber, setMobileNumber] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
+    setLoading(true);
     try {
       const result = await axios.post(
         `${serverUrl}/api/auth/signup`,
@@ -33,10 +39,39 @@ function SignUp() {
         { withCredentials: true }
       );
       console.log(result);
+      setErr("");
+      setLoading(false);
     } catch (error) {
-      console.log("Sign up failed:", error);
+      setErr(error?.response?.data?.message);
+      setLoading(false);
     }
   };
+
+  const handleGoogleAuth = async () => {
+    if (!mobileNumber) {
+      return setErr(
+        "Please enter your mobile number before signing up with Google."
+      );
+    }
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    try {
+      const { data } = await axios.post(
+        `${serverUrl}/api/auth/google-auth`,
+        {
+          fullName: result.user.displayName,
+          email: result.user.email,
+          mobileNumber,
+          role,
+        },
+        { withCredentials: true }
+      );
+      console.log(data);
+    } catch (error) {
+      console.log("Google sign up failed:", error);
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
@@ -72,6 +107,7 @@ function SignUp() {
             style={{ border: `1px solid ${borderColor}` }}
             onChange={(e) => setFullName(e.target.value)}
             value={fullName}
+            required
           />
         </div>
 
@@ -90,6 +126,7 @@ function SignUp() {
             style={{ border: `1px solid ${borderColor}` }}
             onChange={(e) => setEmail(e.target.value)}
             value={email}
+            required
           />
         </div>
 
@@ -108,6 +145,7 @@ function SignUp() {
             style={{ border: `1px solid ${borderColor}` }}
             onChange={(e) => setMobileNumber(e.target.value)}
             value={mobileNumber}
+            required
           />
         </div>
 
@@ -127,6 +165,7 @@ function SignUp() {
               style={{ border: `1px solid ${borderColor}` }}
               onChange={(e) => setPassword(e.target.value)}
               value={password}
+              required
             />
             <button
               className="absolute right-3 cursor-pointer top-[15px] text-gray-600"
@@ -164,11 +203,16 @@ function SignUp() {
 
         <button
           className={`w-full py-2 rounded-lg font-semibold transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-          onClick={handleSignUp}
-        >
-          Sign Up
+          onClick={handleSignUp} disabled={loading}
+        > 
+        {loading ? <ClipLoader size={20}/> : "Sign Up"}
         </button>
-        <button className="w-full py-2 rounded-lg font-semibold transition duration-200 bg-white text-gray-700 hover:bg-gray-100 cursor-pointer border border-gray-300 mt-4 flex items-center justify-center ">
+        {err && <p className="text-red-600 text-center my-5">*{err}</p>}
+
+        <button
+          className="w-full py-2 rounded-lg font-semibold transition duration-200 bg-white text-gray-700 hover:bg-gray-100 cursor-pointer border border-gray-300 mt-4 flex items-center justify-center "
+          onClick={handleGoogleAuth}
+        >
           <FcGoogle size={20} className="inline-block mr-2" />
           <span>Sign Up with Google</span>
         </button>

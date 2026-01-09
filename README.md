@@ -5,19 +5,21 @@ A full-stack web application for managing university canteen operations, allowin
 ## 🚀 Features
 
 ### User Roles
+
 - **User** - Browse shops and menu items
 - **Owner** - Create and manage shops, add/edit menu items
 - **Delivery Boy** - Handle deliveries
 
 ### Core Functionality
+
 - 🔐 **Authentication** - Sign up, sign in, password reset with OTP verification
 - 🏪 **Shop Management** - Create, edit, and manage shops with images
 - 🍔 **Menu Items** - Add, edit, and categorize food items
-- 📍 **Location-based** - City and state-based shop organization
 - 🖼️ **Image Upload** - Cloudinary integration for image storage
 - 🔥 **Firebase Integration** - Additional authentication support
 
 ### Food Categories
+
 - Snacks
 - Desserts
 - Burgers
@@ -30,6 +32,7 @@ A full-stack web application for managing university canteen operations, allowin
 ## 🛠️ Tech Stack
 
 ### Backend
+
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Database**: MongoDB with Mongoose ODM
@@ -39,6 +42,7 @@ A full-stack web application for managing university canteen operations, allowin
 - **Email Service**: Nodemailer
 
 ### Frontend
+
 - **Framework**: React 19
 - **Build Tool**: Vite
 - **State Management**: Redux Toolkit
@@ -78,6 +82,7 @@ Web_Project_01/
 ## 🔧 Installation
 
 ### Prerequisites
+
 - Node.js (v18 or higher)
 - MongoDB
 - Cloudinary account
@@ -135,6 +140,7 @@ The frontend will run on `http://localhost:5173`
 ## 📡 API Endpoints
 
 ### Authentication (`/api/auth`)
+
 - `POST /signup` - Register a new user
 - `POST /signin` - Login user
 - `POST /forgot-password` - Request password reset
@@ -142,16 +148,19 @@ The frontend will run on `http://localhost:5173`
 - `POST /reset-password` - Reset password
 
 ### User (`/api/user`)
+
 - `GET /me` - Get current user profile
 - `PUT /update` - Update user profile
 
 ### Shop (`/api/shop`)
+
 - `POST /create` - Create a new shop
 - `GET /my-shop` - Get owner's shop
 - `PUT /update/:id` - Update shop details
 - `DELETE /:id` - Delete a shop
 
 ### Items (`/api/item`)
+
 - `POST /add` - Add a new item
 - `GET /shop/:shopId` - Get items by shop
 - `PUT /update/:id` - Update an item
@@ -167,9 +176,11 @@ The frontend will run on `http://localhost:5173`
 ## 📝 Scripts
 
 ### Backend
+
 - `npm run dev` - Start development server with nodemon
 
 ### Frontend
+
 - `npm run dev` - Start Vite development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
@@ -177,7 +188,7 @@ The frontend will run on `http://localhost:5173`
 
 ## 👤 Author
 
-**Rafi**
+**Mutasim Fuad Rafi**
 
 ## 📄 License
 

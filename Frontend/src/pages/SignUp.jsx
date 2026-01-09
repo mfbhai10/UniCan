@@ -8,10 +8,11 @@ import { serverUrl } from "../App";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
 import { ClipLoader } from "react-spinners";
+import { setUserData } from "../redux/userSlice";
+import { useDispatch } from "react-redux";
 
 function SignUp() {
   const primaryColor = "#ff4d2d";
-  const hoverColor = "#e64323";
   const bgColor = "#fff9f6";
   const borderColor = "#ddd";
   const [showPassword, setShowPassword] = React.useState(false);
@@ -23,6 +24,7 @@ function SignUp() {
   const [password, setPassword] = React.useState("");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleSignUp = async () => {
     setLoading(true);
@@ -38,7 +40,7 @@ function SignUp() {
         },
         { withCredentials: true }
       );
-      console.log(result);
+      dispatch(setUserData(result.data));
       setErr("");
       setLoading(false);
     } catch (error) {
@@ -66,7 +68,7 @@ function SignUp() {
         },
         { withCredentials: true }
       );
-      console.log(data);
+      dispatch(setUserData(data));
     } catch (error) {
       console.log("Google sign up failed:", error);
     }

@@ -37,7 +37,7 @@ export const signUp = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days(ms)
       httpOnly: true,
     });
-    return res.status(201).json("User created successfully", user);
+    return res.status(201).json(user);
   } catch (error) {
     return res.status(500).json(`Sign up failed: ${error}`);
   }
@@ -62,7 +62,7 @@ export const signIn = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days(ms)
       httpOnly: true,
     });
-    return res.status(200).json("User signed in successfully", user);
+    return res.status(200).json(user);
   } catch (error) {
     return res.status(500).json(`Sign in failed: ${error}`);
   }
@@ -175,7 +175,7 @@ export const googleAuth = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days(ms)
       httpOnly: true,
     });
-    return res.status(200).json("Google Auth successful", user);
+    return res.status(200).json(user);
   } catch (error) {
     return res.status(500).json(`Google Auth failed: ${error}`);
   }

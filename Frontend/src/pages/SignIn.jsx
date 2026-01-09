@@ -6,10 +6,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { ClipLoader } from "react-spinners";
+import { setUserData } from "../redux/userSlice";
+import { useDispatch } from "react-redux";
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from "../../firebase";
 
 function SignIn() {
   const primaryColor = "#ff4d2d";
-  const hoverColor = "#e64323";
   const bgColor = "#fff9f6";
   const borderColor = "#ddd";
   const [showPassword, setShowPassword] = React.useState(false);
@@ -18,6 +21,7 @@ function SignIn() {
   const [password, setPassword] = React.useState("");
   const [err, setErr] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const dispatch = useDispatch();
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -30,7 +34,7 @@ function SignIn() {
         },
         { withCredentials: true }
       );
-      console.log(result);
+      dispatch(setUserData(result.data));
       setErr("");
       setLoading(false);
     } catch (error) {
@@ -38,6 +42,24 @@ function SignIn() {
       setLoading(false);
     }
   };
+
+  const handleGoogleAuth = async () => {
+    
+    try {
+      const Provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, Provider);
+      const { data } = await axios.post(
+        `${serverUrl}/api/auth/google-auth`,{
+          email: result.user.email
+        },
+        { withCredentials: true }
+      );
+      dispatch(setUserData(data));
+    } catch (error) {
+      console.log("Google sign in failed:", error);
+    } 
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
@@ -118,7 +140,8 @@ function SignIn() {
         </button>
         {err && <p className="text-red-600 text-center my-5">*{err}</p>}
 
-        <button className="w-full py-2 rounded-lg font-semibold transition duration-200 bg-white text-gray-700 hover:bg-gray-100 cursor-pointer border border-gray-300 mt-4 flex items-center justify-center ">
+        <button className="w-full py-2 rounded-lg font-semibold transition duration-200 bg-white text-gray-700 hover:bg-gray-100 cursor-pointer border border-gray-300 mt-4 flex items-center justify-center "
+          onClick={handleGoogleAuth} >
           <FcGoogle size={20} className="inline-block mr-2" />
           <span>Sign In with Google</span>
         </button>

@@ -5,10 +5,10 @@ import CategoryCard from "./CategoryCard.jsx";
 import { FaHandPointLeft } from "react-icons/fa";
 import { FaHandPointRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import FoodCard from "./FoodCard.jsx";
 
-
-function UserDashboard() { 
-  const {currentCity, shopsInMyCity} = useSelector((state) => state.user);
+function UserDashboard() {
+  const { currentCity, shopInMyCity, itemsInMyCity } = useSelector((state) => state.user);
   const cateScrollRef = useRef();
   const shopScrollRef = useRef();
   const [showLeftCateButton, setShowLeftCateButton] = useState(false);
@@ -16,46 +16,75 @@ function UserDashboard() {
   const [showLeftShopButton, setShowLeftShopButton] = useState(false);
   const [showRightShopButton, setShowRightShopButton] = useState(false);
 
-  const updateButton = (ref, setLeftButton, setRightButton) =>{
+  const updateButton = (ref, setLeftButton, setRightButton) => {
     const element = ref.current;
-    if(element){
+    if (element) {
       setLeftButton(element.scrollLeft > 0);
-      setRightButton(element.scrollLeft + element.clientWidth < element.scrollWidth);
+      setRightButton(
+        element.scrollLeft + element.clientWidth < element.scrollWidth
+      );
     }
-  }
+  };
 
-  const scrollHandler = (ref, direction)=>{
-    if(ref.current){
+  const scrollHandler = (ref, direction) => {
+    if (ref.current) {
       ref.current.scrollBy({
         left: direction === "left" ? -200 : 200,
-        behavior: "smooth"
-      })
+        behavior: "smooth",
+      });
     }
-  }
+  };
 
   useEffect(() => {
-    if(cateScrollRef.current){
-      updateButton(cateScrollRef, setShowLeftCateButton, setShowRightCateButton);
-      updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
-      cateScrollRef.current.addEventListener('scroll', ()=>{
-        updateButton(cateScrollRef, setShowLeftCateButton, setShowRightCateButton);
-        updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
+    if (cateScrollRef.current) {
+      updateButton(
+        cateScrollRef,
+        setShowLeftCateButton,
+        setShowRightCateButton
+      );
+      updateButton(
+        shopScrollRef,
+        setShowLeftShopButton,
+        setShowRightShopButton
+      );
+      cateScrollRef.current.addEventListener("scroll", () => {
+        updateButton(
+          cateScrollRef,
+          setShowLeftCateButton,
+          setShowRightCateButton
+        );
+        updateButton(
+          shopScrollRef,
+          setShowLeftShopButton,
+          setShowRightShopButton
+        );
       });
-      shopScrollRef.current.addEventListener('scroll', ()=>{
-        updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
+      shopScrollRef.current.addEventListener("scroll", () => {
+        updateButton(
+          shopScrollRef,
+          setShowLeftShopButton,
+          setShowRightShopButton
+        );
       });
     }
 
-      return () => {
-          cateScrollRef.current.removeEventListener('scroll', ()=>{
-            updateButton(cateScrollRef, setShowLeftCateButton, setShowRightCateButton);
-          });
-          shopScrollRef.current.removeEventListener('scroll', ()=>{
-            updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
-          });
-        
-      }
-    }, [categories]);
+    return () => {
+      cateScrollRef.current.removeEventListener("scroll", () => {
+        updateButton(
+          cateScrollRef,
+          setShowLeftCateButton,
+          setShowRightCateButton
+        );
+      });
+      shopScrollRef.current.removeEventListener("scroll", () => {
+        updateButton(
+          shopScrollRef,
+          setShowLeftShopButton,
+          setShowRightShopButton
+        );
+      });
+    };
+  }, [categories]);
 
   return (
     <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col gap-5 items-center overflow-y-auto">
@@ -65,38 +94,76 @@ function UserDashboard() {
           Fresh Picks Just for You
         </h1>
         <div className="w-full relative">
-          {showLeftCateButton && (<button className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]" onClick={()=> scrollHandler(cateScrollRef, "left")}>
-            <FaHandPointLeft />
-          </button>)}
-          
-          <div className="w-full flex overflow-x-auto gap-4 pb-2 " ref={cateScrollRef}>
+          {showLeftCateButton && (
+            <button
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]"
+              onClick={() => scrollHandler(cateScrollRef, "left")}
+            >
+              <FaHandPointLeft />
+            </button>
+          )}
+
+          <div
+            className="w-full flex overflow-x-auto gap-4 pb-2 "
+            ref={cateScrollRef}
+          >
             {categories.map((cate, index) => (
-              <CategoryCard key={index} data={cate} />
+              <CategoryCard key={index} name={cate.name} image={cate.image} />
             ))}
           </div>
-          {showRightCateButton && (<button className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]" onClick={()=> scrollHandler(cateScrollRef, "right")}>
-            <FaHandPointRight />
-          </button>)}
+          {showRightCateButton && (
+            <button
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]"
+              onClick={() => scrollHandler(cateScrollRef, "right")}
+            >
+              <FaHandPointRight />
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]"> 
+      <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
         <h1 className="text-2xl sm:text-3xl text-gray-900">
           Best Shop in {currentCity}
         </h1>
         <div className="w-full relative">
-          {showLeftShopButton && (<button className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]" onClick={()=> scrollHandler(shopScrollRef, "left")}>
-            <FaHandPointLeft />
-          </button>)}
-          
-          <div className="w-full flex overflow-x-auto gap-4 pb-2 " ref={shopScrollRef}>
-            {categories.map((cate, index) => (
-              <CategoryCard key={index} data={cate} />
+          {showLeftShopButton && (
+            <button
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]"
+              onClick={() => scrollHandler(shopScrollRef, "left")}
+            >
+              <FaHandPointLeft />
+            </button>
+          )}
+
+          <div
+            className="w-full flex overflow-x-auto gap-4 pb-2 "
+            ref={shopScrollRef}
+          >
+            {shopInMyCity?.map((shop, index) => (
+              <CategoryCard key={index} name={shop.name} image={shop.image} />
             ))}
           </div>
-          {showRightShopButton && (<button className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]" onClick={()=> scrollHandler(shopScrollRef, "right")}>
-            <FaHandPointRight />
-          </button>)}
+          {showRightShopButton && (
+            <button
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#ff4d2d]"
+              onClick={() => scrollHandler(shopScrollRef, "right")}
+            >
+              <FaHandPointRight />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
+          <h1 className="text-2xl sm:text-3xl text-gray-900">
+            Suggested Food for You
+        </h1>
+
+        <div className="w-full h-auto flex flex-wrap gap-[20px] justify-center">
+          {itemsInMyCity?.map((item, index) => (
+            <FoodCard key={index} data={item} />
+          ))} 
         </div>
       </div>
     </div>

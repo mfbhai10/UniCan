@@ -7,8 +7,8 @@ import { FaHandPointRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 
-function UserDashboard() {
-  const {currentCity} = useSelector((state) => state.user);
+function UserDashboard() { 
+  const {currentCity, shopsInMyCity} = useSelector((state) => state.user);
   const cateScrollRef = useRef();
   const shopScrollRef = useRef();
   const [showLeftCateButton, setShowLeftCateButton] = useState(false);
@@ -36,14 +36,22 @@ function UserDashboard() {
   useEffect(() => {
     if(cateScrollRef.current){
       updateButton(cateScrollRef, setShowLeftCateButton, setShowRightCateButton);
+      updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
       cateScrollRef.current.addEventListener('scroll', ()=>{
         updateButton(cateScrollRef, setShowLeftCateButton, setShowRightCateButton);
+        updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
+      });
+      shopScrollRef.current.addEventListener('scroll', ()=>{
+        updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
       });
     }
 
       return () => {
           cateScrollRef.current.removeEventListener('scroll', ()=>{
             updateButton(cateScrollRef, setShowLeftCateButton, setShowRightCateButton);
+          });
+          shopScrollRef.current.removeEventListener('scroll', ()=>{
+            updateButton(shopScrollRef, setShowLeftShopButton, setShowRightShopButton);
           });
         
       }

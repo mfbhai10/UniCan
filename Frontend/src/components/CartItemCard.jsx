@@ -3,6 +3,7 @@ import { FaMinus } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDispatch } from 'react-redux';
+import { removeCartItem, updateQuantity } from '../redux/userSlice';
 
 function CartItemCard({data}) {
     const dispatch = useDispatch()
@@ -11,7 +12,9 @@ function CartItemCard({data}) {
     }
 
     const handleDecrease = (id, currentQuantity) => {
+      if(currentQuantity > 1){
         dispatch(updateQuantity({ id, quantity: currentQuantity - 1}))
+      }
     }
   return (
     <div className='flex items-center justify-between bg-white p-4 rounded-xl shadow border'>
@@ -32,7 +35,7 @@ function CartItemCard({data}) {
                       <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 gray cursor-pointer" onClick={()=>handleIncrease(data.id, data.quantity)}>
                         <FaPlus size={12} />
                       </button>
-                      <button className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition" >
+                      <button className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition" onClick={()=>dispatch(removeCartItem(data.id))}>
                         <FaTrashAlt size={18} />
                       </button>
        </div>

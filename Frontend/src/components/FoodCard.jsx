@@ -69,7 +69,7 @@ function FoodCard({ data }) {
 
         <div className="mt-auto flex justify-between items-center">
           <span className="text-xl font-bold text-[#ff4d2d]">
-            Tk {data.price}
+            ৳ {data.price}
           </span>
 
           <div className="flex items-center border rounded-full overflow-hidden shadow-sm">

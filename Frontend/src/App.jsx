@@ -26,7 +26,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFail from "./pages/PaymentFail";
 import PaymentCancel from "./pages/PaymentCancel";
 
-export const serverUrl = "http://localhost:8000";
+export const serverUrl = "https://unican-backend.onrender.com";
 const App = () => {
   useGetCurrentUser();
   useGetCity();

@@ -14,7 +14,7 @@ const shopOrderItemSchema = new mongoose.Schema(
       min: 1,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const shopOrderSchema = new mongoose.Schema(
@@ -39,7 +39,7 @@ const shopOrderSchema = new mongoose.Schema(
     },
     shopOrderItems: [shopOrderItemSchema],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const orderSchema = new mongoose.Schema(
@@ -117,7 +117,7 @@ const orderSchema = new mongoose.Schema(
     },
     shopOrder: [shopOrderSchema],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Order = mongoose.model("Order", orderSchema);

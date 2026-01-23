@@ -20,16 +20,17 @@ function EditItem() {
   const [category, setCategory] = useState("");
   const [foodType, setFoodType] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const categories = [
-            "Snacks",
-            "Desserts",
-            "Burgers",
-            "Sandwiches",
-            "Drinks",
-            "Fast Food",
-            "Chinese",
-            "Others"]
+    "Snacks",
+    "Desserts",
+    "Burgers",
+    "Sandwiches",
+    "Drinks",
+    "Fast Food",
+    "Chinese",
+    "Others",
+  ];
   const dispatch = useDispatch();
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -50,13 +51,13 @@ function EditItem() {
         formData.append("image", backendImage);
       }
       const result = await axios.post(
-        `${serverUrl}/api/item/edit-item/${itemId}`, 
+        `${serverUrl}/api/item/edit-item/${itemId}`,
         formData,
         { withCredentials: true }
       );
       dispatch(setMyShopData(result.data));
       setLoading(false);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -65,26 +66,26 @@ function EditItem() {
 
   useEffect(() => {
     const handleGetItemById = async () => {
-        try {
-            const result = await axios.get(
-                `${serverUrl}/api/item/get-by-id/${itemId}`,
-                { withCredentials: true }
-            );
-            setCurrentItem(result.data);
-        } catch (error) {
-            console.log(error);
-        }
-    }
+      try {
+        const result = await axios.get(
+          `${serverUrl}/api/item/get-by-id/${itemId}`,
+          { withCredentials: true }
+        );
+        setCurrentItem(result.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     handleGetItemById();
   }, [itemId]);
 
-  useEffect(()=>{
-      setName(currentItem?.name || "");
-      setPrice(currentItem?.price || 0);
-      setFrontendImage(currentItem?.image || "");
-      setCategory(currentItem?.category || "");
-      setFoodType(currentItem?.foodType || "");
-  },[currentItem])
+  useEffect(() => {
+    setName(currentItem?.name || "");
+    setPrice(currentItem?.price || 0);
+    setFrontendImage(currentItem?.image || "");
+    setCategory(currentItem?.category || "");
+    setFoodType(currentItem?.foodType || "");
+  }, [currentItem]);
 
   return (
     <div className="flex justify-center items-center flex-col p-6 bg-gradient-to-br from-orange-50 relative to-white min-h-screen">
@@ -159,12 +160,12 @@ function EditItem() {
               onChange={(e) => setCategory(e.target.value)}
               value={category}
             >
-                <option value="">Select a category</option> 
-                {categories.map((cate, index) => (
-                  <option value={cate} key={index} >
-                    {cate}
-                  </option>
-                ))}
+              <option value="">Select a category</option>
+              {categories.map((cate, index) => (
+                <option value={cate} key={index}>
+                  {cate}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -177,13 +178,16 @@ function EditItem() {
               onChange={(e) => setFoodType(e.target.value)}
               value={foodType}
             >
-                  <option value="Veg" > Veg </option>
-                  <option value="NonVeg" > Non-Veg </option>
+              <option value="Veg"> Veg </option>
+              <option value="NonVeg"> Non-Veg </option>
             </select>
           </div>
-            
-          <button className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-200 cursor-pointer" disabled={loading}>
-            {loading? <ClipLoader size={20} color="white"/> : "Save" }
+
+          <button
+            className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-200 cursor-pointer"
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color="white" /> : "Save"}
           </button>
         </form>
       </div>

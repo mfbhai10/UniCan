@@ -13,7 +13,7 @@ function CartPage() {
         <div className="flex items-center gap-[20px] mb-6 ">
           <div
             className=" z-[10]  cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/home")}
           >
             <IoIosArrowRoundBack size={35} className="text-[#ff4d2d]" />
           </div>
@@ -38,7 +38,10 @@ function CartPage() {
               </span>
             </div>
             <div className="mt-4 flex justify-end">
-              <button className="bg-[#ff4d2d] text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-[#e64526] transition cursor-pointer">
+              <button
+                className="bg-[#ff4d2d] text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-[#e64526] transition cursor-pointer"
+                onClick={() => navigate("/checkout")}
+              >
                 Proceed to Checkout
               </button>
             </div>

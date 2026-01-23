@@ -43,14 +43,14 @@ export const createEditShop = async (req, res) => {
 export const getMyShop = async (req, res) => {
   try {
     const shop = await Shop.findOne({ owner: req.userId });
+    if (!shop) {
+      return res.status(404).json("Shop not found");
+    }
     await shop.populate("owner");
     await shop.populate({
       path: "items",
       options: { sort: { createdAt: -1 } },
     });
-    if (!shop) {
-      return res.status(404).json("Shop not found");
-    }
     return res.status(200).json(shop);
   } catch (error) {
     return res.status(500).json(`Get my shop failed: ${error}`);

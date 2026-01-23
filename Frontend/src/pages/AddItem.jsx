@@ -11,7 +11,7 @@ import { ClipLoader } from "react-spinners";
 function AddItem() {
   const navigate = useNavigate();
   const { myShopData } = useSelector((state) => state.owner);
-  
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [frontendImage, setFrontendImage] = useState(null);
@@ -20,14 +20,15 @@ function AddItem() {
   const [foodType, setFoodType] = useState("Veg");
   const [loading, setLoading] = useState(false);
   const categories = [
-            "Snacks",
-            "Desserts",
-            "Burgers",
-            "Sandwiches",
-            "Drinks",
-            "Fast Food",
-            "Chinese",
-            "Others"]
+    "Snacks",
+    "Desserts",
+    "Burgers",
+    "Sandwiches",
+    "Drinks",
+    "Fast Food",
+    "Chinese",
+    "Others",
+  ];
   const dispatch = useDispatch();
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -54,7 +55,7 @@ function AddItem() {
       );
       dispatch(setMyShopData(result.data));
       setLoading(false);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -134,12 +135,12 @@ function AddItem() {
               onChange={(e) => setCategory(e.target.value)}
               value={category}
             >
-                <option value="">Select a category</option> 
-                {categories.map((cate, index) => (
-                  <option value={cate} key={index} >
-                    {cate}
-                  </option>
-                ))}
+              <option value="">Select a category</option>
+              {categories.map((cate, index) => (
+                <option value={cate} key={index}>
+                  {cate}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -152,13 +153,16 @@ function AddItem() {
               onChange={(e) => setFoodType(e.target.value)}
               value={foodType}
             >
-                  <option value="Veg" > Veg </option>
-                  <option value="NonVeg" > Non-Veg </option>
+              <option value="Veg"> Veg </option>
+              <option value="NonVeg"> Non-Veg </option>
             </select>
           </div>
-            
-          <button className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-200 cursor-pointer" disabled={loading}>
-            {loading? <ClipLoader size={20} color="white"/> : "Save" }
+
+          <button
+            className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-200 cursor-pointer"
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color="white" /> : "Save"}
           </button>
         </form>
       </div>

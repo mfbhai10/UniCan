@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
@@ -9,7 +9,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
 import { ClipLoader } from "react-spinners";
 import { setUserData } from "../redux/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function SignUp() {
   const primaryColor = "#ff4d2d";
@@ -25,6 +25,14 @@ function SignUp() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const { userData, currentCity } = useSelector((state) => state.user);
+
+  // Navigate to home when both user data and city are available
+  useEffect(() => {
+    if (userData && currentCity) {
+      navigate("/home");
+    }
+  }, [userData, currentCity, navigate]);
 
   const handleSignUp = async () => {
     setLoading(true);
@@ -38,7 +46,7 @@ function SignUp() {
           password,
           role,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(setUserData(result.data));
       setErr("");
@@ -52,12 +60,17 @@ function SignUp() {
   const handleGoogleAuth = async () => {
     if (!mobileNumber) {
       return setErr(
-        "Please enter your mobile number before signing up with Google."
+        "Please enter your mobile number before signing up with Google.",
       );
     }
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
+
     try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: "select_account",
+      });
+
+      const result = await signInWithPopup(auth, provider);
       const { data } = await axios.post(
         `${serverUrl}/api/auth/google-auth`,
         {
@@ -66,11 +79,22 @@ function SignUp() {
           mobileNumber,
           role,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(setUserData(data));
     } catch (error) {
-      console.log("Google sign up failed:", error);
+      console.error("Google sign up failed:", error);
+      if (error.code === "auth/popup-blocked") {
+        alert(
+          "Popup was blocked by browser. Please allow popups for this site.",
+        );
+      } else if (error.code === "auth/popup-closed-by-user") {
+        console.log("User closed the popup");
+      } else {
+        alert(
+          "Google sign-up failed. Please try again or use email/password signup.",
+        );
+      }
     }
   };
 
@@ -205,10 +229,16 @@ function SignUp() {
 
         <button
           className={`w-full py-2 rounded-lg font-semibold transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-          onClick={handleSignUp} disabled={loading}
-        > 
-        {loading ? <ClipLoader size={20}/> : "Sign Up"}
+          onClick={handleSignUp}
+          disabled={loading}
+        >
+          {loading ? <ClipLoader size={20} color="#ffffff" /> : "Sign Up"}
         </button>
+        {!loading && userData && !currentCity && (
+          <p className="text-blue-600 text-center my-2 text-sm">
+            Preparing your dashboard...
+          </p>
+        )}
         {err && <p className="text-red-600 text-center my-5">*{err}</p>}
 
         <button

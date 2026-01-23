@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
@@ -7,8 +7,8 @@ import axios from "axios";
 import { serverUrl } from "../App";
 import { ClipLoader } from "react-spinners";
 import { setUserData } from "../redux/userSlice";
-import { useDispatch } from "react-redux";
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useDispatch, useSelector } from "react-redux";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase";
 
 function SignIn() {
@@ -22,6 +22,21 @@ function SignIn() {
   const [err, setErr] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
+  const { userData, currentCity } = useSelector((state) => state.user);
+
+  // Navigate to home when both user data and city are available
+  useEffect(() => {
+    console.log(
+      "SignIn useEffect - userData:",
+      !!userData,
+      "currentCity:",
+      currentCity,
+    );
+    if (userData && currentCity) {
+      console.log("Navigating to /home...");
+      navigate("/home");
+    }
+  }, [userData, currentCity, navigate]);
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -32,7 +47,7 @@ function SignIn() {
           email,
           password,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(setUserData(result.data));
       setErr("");
@@ -44,20 +59,38 @@ function SignIn() {
   };
 
   const handleGoogleAuth = async () => {
-    
     try {
+      // Set custom parameters to avoid issues
       const Provider = new GoogleAuthProvider();
+      Provider.setCustomParameters({
+        prompt: "select_account",
+      });
+
       const result = await signInWithPopup(auth, Provider);
       const { data } = await axios.post(
-        `${serverUrl}/api/auth/google-auth`,{
-          email: result.user.email
+        `${serverUrl}/api/auth/google-auth`,
+        {
+          email: result.user.email,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(setUserData(data));
     } catch (error) {
-      console.log("Google sign in failed:", error);
-    } 
+      console.error("Google sign in failed:", error);
+      // Show user-friendly error message
+      if (error.code === "auth/popup-blocked") {
+        alert(
+          "Popup was blocked by browser. Please allow popups for this site.",
+        );
+      } else if (error.code === "auth/popup-closed-by-user") {
+        // User closed popup, no action needed
+        console.log("User closed the popup");
+      } else {
+        alert(
+          "Google sign-in failed. Please try again or use email/password login.",
+        );
+      }
+    }
   };
 
   return (
@@ -93,7 +126,8 @@ function SignIn() {
             placeholder="Enter your Email"
             style={{ border: `1px solid ${borderColor}` }}
             onChange={(e) => setEmail(e.target.value)}
-            value={email} required
+            value={email}
+            required
           />
         </div>
 
@@ -112,7 +146,8 @@ function SignIn() {
               placeholder="Enter your Password"
               style={{ border: `1px solid ${borderColor}` }}
               onChange={(e) => setPassword(e.target.value)}
-              value={password} required
+              value={password}
+              required
             />
             <button
               className="absolute right-3 cursor-pointer top-[15px] text-gray-600"
@@ -134,14 +169,22 @@ function SignIn() {
 
         <button
           className={`w-full py-2 rounded-lg font-semibold transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
-          onClick={handleSignIn} disabled={loading}
+          onClick={handleSignIn}
+          disabled={loading}
         >
-          {loading ? <ClipLoader size={20}/> : "Sign In"}
+          {loading ? <ClipLoader size={20} color="#ffffff" /> : "Sign In"}
         </button>
+        {!loading && userData && !currentCity && (
+          <p className="text-blue-600 text-center my-2 text-sm">
+            Preparing your dashboard...
+          </p>
+        )}
         {err && <p className="text-red-600 text-center my-5">*{err}</p>}
 
-        <button className="w-full py-2 rounded-lg font-semibold transition duration-200 bg-white text-gray-700 hover:bg-gray-100 cursor-pointer border border-gray-300 mt-4 flex items-center justify-center "
-          onClick={handleGoogleAuth} >
+        <button
+          className="w-full py-2 rounded-lg font-semibold transition duration-200 bg-white text-gray-700 hover:bg-gray-100 cursor-pointer border border-gray-300 mt-4 flex items-center justify-center "
+          onClick={handleGoogleAuth}
+        >
           <FcGoogle size={20} className="inline-block mr-2" />
           <span>Sign In with Google</span>
         </button>

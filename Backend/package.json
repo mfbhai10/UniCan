@@ -4,6 +4,7 @@
   "description": "new project for uiu canteen",
   "license": "ISC",
   "author": "Rafi",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js"
@@ -19,6 +20,7 @@
     "mongoose": "^9.0.1",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.11",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "sslcommerz-lts": "^1.2.0"
   }
 }

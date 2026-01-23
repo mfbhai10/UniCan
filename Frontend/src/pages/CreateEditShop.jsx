@@ -47,7 +47,7 @@ function CreateEditShop() {
       );
       dispatch(setMyShopData(result.data));
       setLoading(false);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -143,8 +143,11 @@ function CreateEditShop() {
               value={address}
             />
           </div>
-          <button className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-200 cursor-pointer" disabled={loading}>
-            {loading? <ClipLoader size={20} color="white"/> : "Save" }
+          <button
+            className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-200 cursor-pointer"
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color="white" /> : "Save"}
           </button>
         </form>
       </div>

@@ -28,7 +28,7 @@ export const addItem = async (req, res) => {
     await shop.populate({
       path: "items",
       options: { sort: { createdAt: -1 } },
-    })
+    });
     return res.status(201).json(shop);
   } catch (error) {
     return res.status(500).json(`Add item failed: ${error}`);
@@ -62,17 +62,15 @@ export const editItem = async (req, res) => {
       options: { sort: { createdAt: -1 } },
     });
     return res.status(200).json(shop);
-
   } catch (error) {
     return res.status(500).json(`Edit item failed: ${error}`);
   }
 };
 
-
 export const getItemById = async (req, res) => {
   try {
     const itemId = req.params.itemId;
-    const item = await Item.findById(itemId)
+    const item = await Item.findById(itemId);
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
     }
@@ -90,12 +88,12 @@ export const deleteItem = async (req, res) => {
       return res.status(404).json({ message: "Item not found" });
     }
     const shop = await Shop.findOne({ owner: req.userId });
-    shop.items = shop.items.filter(i => i._id.toString() !== itemId);  //9:34:55
+    shop.items = shop.items.filter((i) => i._id.toString() !== itemId); //9:34:55
     await shop.save();
     await shop.populate({
       path: "items",
       options: { sort: { createdAt: -1 } },
-    })
+    });
     return res.status(200).json(shop);
   } catch (error) {
     return res.status(500).json(`Delete item failed: ${error}`);
@@ -108,14 +106,23 @@ export const getItemsByCity = async (req, res) => {
     if (!city) {
       return res.status(400).json({ message: "City is required" });
     }
-    const shops = await Shop.find({ city: { $regex: new RegExp(`${city}$`, "i") } }).populate('items')
-    if(!shops){
+    const shops = await Shop.find({
+      city: { $regex: new RegExp(`${city}$`, "i") },
+    }).populate("items");
+    if (!shops) {
       return res.status(404).json("No shops found in this city");
     }
-    const shopIds = shops.map(shop => shop._id);
-    const items = await Item.find({ shop: { $in: shopIds } });
+    const shopIds = shops.map((shop) => shop._id);
+    const items = await Item.find({ shop: { $in: shopIds } }).populate({
+      path: "shop",
+      select: "_id owner",
+      populate: {
+        path: "owner",
+        select: "_id",
+      },
+    });
     return res.status(200).json(items);
   } catch (error) {
     return res.status(500).json(`Get items by city failed: ${error}`);
-  } 
-}
+  }
+};
